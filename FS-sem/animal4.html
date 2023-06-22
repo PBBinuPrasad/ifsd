@@ -1,0 +1,60 @@
+<html>
+<head>
+  <title>Zoo Animals</title>
+  <!-- Include necessary CSS or stylesheets -->
+</head>
+<body>
+  <div id="root"></div>
+
+  <script src="https://unpkg.com/react/umd/react.development.js"></script>
+  <script src="https://unpkg.com/react-dom/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/babel-standalone/babel.min.js"></script>
+
+  <script type="text/babel">
+    // Define the main React component
+    const App = () => {
+      const [animals, setAnimals] = React.useState([]);
+      const [years, setYears] = React.useState(0);
+      const [aliveAnimals, setAliveAnimals] = React.useState([]);
+
+      React.useEffect(() => {
+        // Fetch animals data from the API
+        fetch('/api/animals')
+          .then((response) => response.json())
+          .then((data) => setAnimals(data))
+          .catch((error) => console.error('Error:', error));
+      }, []);
+
+      const calculateAliveAnimals = () => {
+        const filteredAnimals = animals.filter((animal) => animal.lifespan > years);
+        setAliveAnimals(filteredAnimals);
+      };
+
+      const handleYearsChange = (event) => {
+        setYears(event.target.value);
+      };
+
+      return (
+        <div>
+          <h1>Zoo Animals</h1>
+
+          <label htmlFor="years">Enter the number of years:</label>
+          <input type="number" id="years" onChange={handleYearsChange} />
+
+          <button onClick={calculateAliveAnimals}>Calculate</button>
+
+          <h2>Alive Animals:</h2>
+          <ul>
+            {aliveAnimals.map((animal) => (
+              <li key={animal._id}>{animal.name}</li>
+            ))}
+          </ul>
+        </div>
+      );
+    };
+
+    // Render the App component into the root element
+    ReactDOM.render(<App />, document.getElementById('root'));
+  </script>
+</body>
+</html>
